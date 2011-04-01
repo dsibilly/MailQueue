@@ -38,16 +38,53 @@ require_once('MailHeader.php');
  */
 class MailMessage
 {
+  /**
+   * The message content.
+   *
+   * @access private
+   */
   private $_content;
+  
+  /**
+   * The message subject.
+   *
+   * @access private
+   */
   private $_subject;
+  
+  /**
+   * A MailRecipientList of message recipients.
+   *
+   * @access private
+   */
   private $_recipients;
+  
+  /**
+   * A MailHeaderList of message headers.
+   *
+   * @access private
+   */
   private $_headers;
+  
+  /**
+   * An array of error messages.
+   *
+   * @access private
+   */
   private $_errors;
   
+  /**
+   * Initialize a new, empty MailMessage instance.
+   */
   public function __construct() {
     $this->reset();
   }
   
+  /**
+   * Render the MailMessage to a formatted string.
+   *
+   * @return string A formatted string of the MailMessage contents.
+   */
   public function __toString() {
     $ret  = '';
     $from = $this->_headers->headerType('From');
@@ -67,6 +104,9 @@ class MailMessage
     return $ret;
   }
   
+  /**
+   * Reset the MailMessage to an empty state.
+   */
   public function reset() {
     $this->content = '';
     $this->_recipients = new MailRecipientList();
@@ -75,10 +115,24 @@ class MailMessage
     $this->_headers->addHeader(MailHeader::ofTypeWithContent('X-Mailer', 'MailQueue ' . VERSION));
   }
   
-  public function from($address) {
+  /**
+   * Accessor for the From: header.
+   *
+   * Retrieve with default arguments (e.g. from()).
+   * Set with a valid email address (e..g from('john.doe@example.com')).
+   */ 
+  public function from($address = NULL) {
+    if (is_null($address))
+      return $this->_headers->headerType('From');
     return $this->_headers->addHeader(FromHeader::withSender($address));
   }
   
+  /**
+   * Accessor for the To: header.
+   *
+   * Retreive with default arguments (e.g. to()).
+   * Set with a MailRecipientList (e.g. to($mailRecipientList)).
+   */
   public function to($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_recipients;
@@ -94,6 +148,12 @@ class MailMessage
     $this->_recipients = $mailRecipientList;
   }
   
+  /**
+   * Accessor for the Cc: header.
+   *
+   * Retrieve with default arguments (e.g. cc()).
+   * Set with a MailRecipientList (e.g. cc($mailRecipientList)).
+   */
   public function cc($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_headers->headerType('Cc');
@@ -111,6 +171,12 @@ class MailMessage
     }
   }
   
+  /**
+   * Accessor for the Bcc: header.
+   *
+   * Retrieve with default arguments (e.g. bcc()).
+   * Set with a MailRecipientList (e.g. bcc($mailRecipientList)).
+   */
   public function bcc($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_headers->headerType('Bcc');
@@ -128,6 +194,12 @@ class MailMessage
     }
   }
   
+  /**
+   * Accessor for the subject line.
+   *
+   * Retrieve with default arguments (e.g. subject()).
+   * Set with a string (e.g. subject('This is the subject line')).
+   */
   public function subject($subject = NULL) {
     if (is_null($subject))
       return $this->_subject;
@@ -135,6 +207,12 @@ class MailMessage
     $this->_subject = $subject;
   }
   
+  /**
+   * Accessor for the message body.
+   *
+   * Retreive with default arguments (e.g. content()).
+   * Set with a string (e.g. content('This is the message body')).
+   */
   public function content($content = NULL) {
     if (is_null($content))
       return $this->_content;
@@ -142,6 +220,13 @@ class MailMessage
     $this->_content = $content;
   }
   
+  /**
+   * Add a recipient to the message.
+   *
+   * @param string $name The recipient's name.
+   * @param string $address The recipient's email address.
+   * @return bool TRUE if $address is valid and not already present in the recipient list, FALSE on failure.
+   */
   public function addRecipientWithNameAndAddress($name, $address) {
     try {
       return $this->addMailRecipient(MailRecipient::withNameAndAddress($name, $address));
@@ -151,6 +236,12 @@ class MailMessage
     }
   }
   
+  /**
+   * Add a recipient to the message.
+   *
+   * @param string $address The recipient's email address.
+   * @return bool TRUE if $address is valid, and not already present in the recipient list, FALSE on failure.
+   */ 
   public function addRecipientWithAddress($address) {
     try {
       return $this->addMailRecipient(MailRecipient::withAddress($address));
@@ -160,14 +251,22 @@ class MailMessage
     }
   }
   
+  /**
+   * Add a MailRecipient instance to the recipient list.
+   *
+   * @param MailRecipient $mailRecipient A MailRecipient instance.
+   * @return bool TRUE if successful, FALSE if the MailRecipient's email address is already present in the recipient list.
+   */
   public function addMailRecipient($mailRecipient) {
     return $this->_recipients->addMailRecipient($mailRecipient);
   }
   
-  public function batchSend() {
-    return $this->send(TRUE);
-  }
-  
+  /**
+   * Send the MailMessage to the registered recipients.
+   *
+   * @param bool $batch Set to TRUE to send one email with all To: recipients on one line (default: FALSE)
+   * @return int The number of errors encountered while sending; 0 if all send operations were successful.
+   */
   public function send($batch = FALSE) {
     $this->_errors = array();
     $headers = (string)$this->_headers;
@@ -184,6 +283,20 @@ class MailMessage
     return count($this->_errors);
   }
   
+  /**
+   * Convenience method for sending a single batch email.
+   *
+   * @return int The number of errors encountered while sending; 0 if all send operations were successful.
+   */
+  public function batchSend() {
+    return $this->send(TRUE);
+  }
+  
+  /**
+   * Accessor for the MailMessage error array.
+   *
+   * @return array An array of error messages from the last send() call.
+   */
   public function errors() {
     return $this->_errors;
   }
