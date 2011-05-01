@@ -1,4 +1,4 @@
-MailQueue
+MailQueue ![Project status](http://stillmaintained.com/dsibilly/MailQueue.png)
 =========
 A PHP object library for flexible email composition and dispatching. It aims to be an easy to use wrapper around PHP's native mail() function for use in object-heavy projects.
 
@@ -30,10 +30,10 @@ To use MailQueue's message objects, first include [MailMessage.php](MailMessage.
 		
 You create mail messages by instantiating the MailMessage object and using its methods to add content:
 
-    $message = new MailMessage();
-    $message->content('This is a test message');
-    $message->subject('Test Message from MailQueue');
-    $message->addRecipientWithNameAndAddress('John Doe', 'john.doe@example.com');
-    $message->addRecipientWithAddress('jane.doe@example.com');
+          $message = new MailMessage();
+          $message->content('This is a test message');
+          $message->subject('Test Message from MailQueue');
+          $message->addRecipientWithNameAndAddress('John Doe', 'john.doe@example.com');
+          $message->addRecipientWithAddress('jane.doe@example.com');
 
 Then you can use send() or batchSend() to dispatch the email as constructed.
