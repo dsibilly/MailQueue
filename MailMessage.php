@@ -7,7 +7,7 @@
  *
  * Copyright 2011 Duane Sibilly. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
@@ -18,11 +18,11 @@
  *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE DUANE SIBILLY "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  * IN NO EVENT SHALL DUANE SIBILLY BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS 
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -30,7 +30,7 @@
  *
  * @package MailQueue
  * @author Duane Sibilly <duane@sibilly.com>
- */ 
+ */
 
 /**
  * The version of the MailQueue project.
@@ -55,42 +55,42 @@ class MailMessage
    * @access private
    */
   private $_content;
-  
+
   /**
    * The message subject.
    *
    * @access private
    */
   private $_subject;
-  
+
   /**
    * A MailRecipientList of message recipients.
    *
    * @access private
    */
   private $_recipients;
-  
+
   /**
    * A MailHeaderList of message headers.
    *
    * @access private
    */
   private $_headers;
-  
+
   /**
    * An array of error messages.
    *
    * @access private
    */
   private $_errors;
-  
+
   /**
    * Initialize a new, empty MailMessage instance.
    */
   public function __construct() {
     $this->reset();
   }
-  
+
   /**
    * Render the MailMessage to a formatted string.
    *
@@ -114,7 +114,7 @@ class MailMessage
     $ret .= "\n\n";
     return $ret;
   }
-  
+
   /**
    * Reset the MailMessage to an empty state.
    */
@@ -125,19 +125,19 @@ class MailMessage
     $this->_errors = array();
     $this->_headers->addHeader(MailHeader::ofTypeWithContent('X-Mailer', 'MailQueue ' . VERSION));
   }
-  
+
   /**
    * Accessor for the From: header.
    *
    * Retrieve with default arguments (e.g. from()).
    * Set with a valid email address (e..g from('john.doe@example.com')).
-   */ 
+   */
   public function from($address = NULL) {
     if (is_null($address))
       return $this->_headers->headerType('From');
     return $this->_headers->addHeader(FromHeader::withSender($address));
   }
-  
+
   /**
    * Accessor for the To: header.
    *
@@ -147,7 +147,7 @@ class MailMessage
   public function to($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_recipients;
-    
+
     if (! is_a($mailRecipientList, 'MailRecipientList')) {
       $type = typeof($mailRecipientList);
       if ($type == 'object') {
@@ -155,10 +155,10 @@ class MailMessage
       }
       throw new Exception(__METHOD__ . " requires as an argument a MailRecipientList; $type encountered");
     }
-    
+
     $this->_recipients = $mailRecipientList;
   }
-  
+
   /**
    * Accessor for the Cc: header.
    *
@@ -168,7 +168,7 @@ class MailMessage
   public function cc($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_headers->headerType('Cc');
-    
+
     if (! is_a($mailRecipientList, 'MailRecipientList')) {
       $type = typeof($mailRecipientList);
       if ($type == 'object') {
@@ -176,12 +176,12 @@ class MailMessage
       }
       throw new Exception(__METHOD__ . " requires as an argument a MailRecipientList; $type encountered");
     }
-    
+
     if (! $this->_headers->addHeader(CCHeader::withRecipientList($mailRecipientList))) {
       throw new Exception(__METHOD__ . " Unable to add a second CC header");
     }
   }
-  
+
   /**
    * Accessor for the Bcc: header.
    *
@@ -191,7 +191,7 @@ class MailMessage
   public function bcc($mailRecipientList = NULL) {
     if (is_null($mailRecipientList))
       return $this->_headers->headerType('Bcc');
-    
+
     if (! is_a($mailRecipientList, 'MailRecipientList')) {
       $type = typeof($mailRecipientList);
       if ($type == 'object') {
@@ -199,12 +199,12 @@ class MailMessage
       }
       throw new Exception(__METHOD__ . " requires as an argument a MailRecipientList; $type encountered");
     }
-    
+
     if (! $this->_headers->addHeader(BCCHeader::withRecipientList($mailRecipientList))) {
       throw new Exception(__METHOD__ . " Unable to add a second BCC header");
     }
   }
-  
+
   /**
    * Accessor for the subject line.
    *
@@ -214,10 +214,10 @@ class MailMessage
   public function subject($subject = NULL) {
     if (is_null($subject))
       return $this->_subject;
-    
+
     $this->_subject = $subject;
   }
-  
+
   /**
    * Accessor for the message body.
    *
@@ -227,10 +227,10 @@ class MailMessage
   public function content($content = NULL) {
     if (is_null($content))
       return $this->_content;
-    
+
     $this->_content = $content;
   }
-  
+
   /**
    * Add a recipient to the message.
    *
@@ -246,13 +246,13 @@ class MailMessage
       return FALSE;
     }
   }
-  
+
   /**
    * Add a recipient to the message.
    *
    * @param string $address The recipient's email address.
    * @return bool TRUE if $address is valid, and not already present in the recipient list, FALSE on failure.
-   */ 
+   */
   public function addRecipientWithAddress($address) {
     try {
       return $this->addMailRecipient(MailRecipient::withAddress($address));
@@ -261,7 +261,7 @@ class MailMessage
       return FALSE;
     }
   }
-  
+
   /**
    * Add a MailRecipient instance to the recipient list.
    *
@@ -271,7 +271,7 @@ class MailMessage
   public function addMailRecipient($mailRecipient) {
     return $this->_recipients->addMailRecipient($mailRecipient);
   }
-  
+
   /**
    * Send the MailMessage to the registered recipients.
    *
@@ -285,15 +285,15 @@ class MailMessage
       $to = (string)$this->_recipients;
       return mail($to, $this->_subject, $this->_content, $headers);
     }
-    
+
     foreach ($this->_recipients as $to) {
       if (! mail((string)$to, $this->_subject, $this->_content, $headers))
         $this->_errors[] = "Unable to send to $to";
     }
-    
+
     return count($this->_errors);
   }
-  
+
   /**
    * Convenience method for sending a single batch email.
    *
@@ -302,7 +302,7 @@ class MailMessage
   public function batchSend() {
     return $this->send(TRUE);
   }
-  
+
   /**
    * Accessor for the MailMessage error array.
    *

@@ -6,7 +6,7 @@
  *
  * Copyright 2011 Duane Sibilly. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
@@ -46,7 +46,7 @@ class MailRecipient
    * @var string
    */
   private $_name;
-  
+
   /**
    * The address associated with this recipient.
    *
@@ -54,7 +54,7 @@ class MailRecipient
    * @var string
    */
   private $_address;
-  
+
   /**
    * Initialize a new, empty MailRecipient instance.
    */
